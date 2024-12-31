@@ -1,0 +1,38 @@
+services:
+    # Define service for ROS workspace with Robotiq 2F-85 gripper
+    robotiq_2f85_ws:
+      # Build Docker image using Dockerfile in .devcontainer directory
+      build: .devcontainer
+      # Set container name for easy reference
+      container_name: robotiq_2f85_container
+      # Use NVIDIA runtime for GPU support
+      runtime: nvidia
+      environment:
+      # Enable access to all NVIDIA GPUs inside container
+      - NVIDIA_VISIBLE_DEVICES=all
+      # Enable all NVIDIA driver capabilities (compute, utility, graphics etc.)
+      - NVIDIA_DRIVER_CAPABILITIES=all 
+      # Forward X11 display from host to enable GUI applications
+      - DISPLAY=$DISPLAY
+      # Fix for Qt applications rendering issues in containerized X11
+      - QT_X11_NO_MITSHM=1
+      # Set ROS node hostname for local networking
+      - ROS_HOSTNAME=localhost
+      volumes:
+        # Mount host /dev directory for USB device access
+        - /dev:/dev
+        # Mount X11 socket for GUI applications
+        - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        # Mount ROS workspace directory
+        - ./catkin_ws/src/Robotiq-2f-85:/catkin_ws/src/Robotiq-2f-85
+        # Mount VSCode configuration
+        - ./.vscode:/.vscode
+
+      # Grant extended privileges to container
+      privileged: true
+      # Enable interactive terminal
+      tty: true
+      # Use host network stack
+      network_mode: host
+      # Start command: source ROS, build catkin workspace with Python3, start bash
+      command: bash -c "source /opt/ros/noetic/setup.bash && catkin build -DPYTHON_EXECUTABLE=/usr/bin/python3 && source /catkin_ws/devel/setup.bash && bash"

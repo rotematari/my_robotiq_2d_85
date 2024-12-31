@@ -1,0 +1,23 @@
+{
+  "name": "noetic desktop-full",
+  "dockerFile": "Dockerfile",
+  "runArgs": [
+    "--privileged",
+    "--network=host"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",          // Python extension
+        "ms-vscode.cpptools",        // C/C++ tools
+        "ms-iot.vscode-ros",         // ROS extension
+        // "esbenp.prettier-vscode",     // Prettier code formatter
+        "ms-azuretools.vscode-docker" // docker extention 
+      ]
+    }},
+  "workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/${localWorkspaceFolderBasename}",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind"
+  ]
+}
